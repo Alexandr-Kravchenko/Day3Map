@@ -24,6 +24,5 @@
   "homepage": "https://github.com/Alexandr-Kravchenko/Day3Map#readme",
   "dependencies": {
     "moment": "^2.29.1"
-  },
-  "type": "module"
+  }
 }
