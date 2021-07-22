@@ -1,0 +1,25 @@
+{
+  "name": "map",
+  "version": "1.0.0",
+  "description": "WordFrequency EmployeeBirthDays",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alexandr-Kravchenko/Day3Map.git"
+  },
+  "author": "Alexandr-Kravchenko",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/preset-env": "^7.14.8",
+    "babel-jest": "^27.0.6",
+    "jest": "^27.0.6"
+  },
+  "bugs": {
+    "url": "https://github.com/Alexandr-Kravchenko/Day3Map/issues"
+  },
+  "homepage": "https://github.com/Alexandr-Kravchenko/Day3Map#readme"
+}
