@@ -1,39 +1,58 @@
-/* Декабрь 2020
-(20) - Ваня Иванов (23 года)
-(23) - Петя Петров (25 лет)
-Январь 2021
-(01) - Коля Новогодний (21 год)
-(07) - Стас Рождественский (30 лет)
-Февраль 2021
-(03) - Влад Лютый (24 год)
-(14) - Стас Валентинов (30 лет)
-*/
+const moment = require('moment');
 
 let employees = [
-    ['Ваня Иванов', '2000-08-20'],
-    ['Коля Новогодний', '2000-01-02'],
-    ['Петя Петров', '2002-04-12'],
-    ['Стас Рождественский', '2001-01-12'],
-    ['Марина Майская', '2003-08-17'],
-    ['Стас Неяснов', '2003-04-16']
+    { name: 'Ваня Иванов', birthday: '2000-08-20' },
+    { name: 'Коля Новогодний', birthday: '2000-07-02' },
+    { name: 'Петя Петров', birthday: '2002-09-12' },
+    { name: 'Стас Рождественский', birthday: '2001-09-12' },
+    { name: 'Марина Майская', birthday: '2003-08-17' },
+    { name: 'Стас Неяснов', birthday: '2003-07-16' }
 ]
 
-function formatMap(list) {
-    let testMap = new Map();
+const months =[
+   'Январь',
+   'Февраль',
+   'Март',
+   'Апрель',
+   'Май',
+   'Июнь',
+   'Июль',
+   'Август',
+   'Сентябрь',
+   'Ноябрь',
+   'Декабрь',
+];
+
+function formatMap(list, ) {
+    let employeeMap = new Map();
     list.forEach((user) => {
-        let bday = user[1];
-        testMap.set(user[0], new Date(bday))
+        let birthDate = new Date(user.birthday);
+        let birthMonth = birthDate.getMonth() + 1;
+        if(employeeMap.has(birthMonth)) {
+            let employees = employeeMap.get(birthMonth);
+            employees.push({name: user.name, birthday: birthDate})
+            employeeMap.set(birthMonth, employees)
+        } else {
+            employeeMap.set(birthMonth, [{name: user.name, birthday: birthDate}])
+        }
     })
 
-    return testMap
-} 
-
-function formatList(map) {
-    let temp = [];
-    let test = map[Symbol.iterator]();
-    for (const item of test) {
-        
-    }
+    return employeeMap;
 }
 
-formatList(formatMap(employees))
+
+//console.log(formatMap(employees))
+
+function formatStr(map) {
+    let currentDate = new Date();
+    let temp = map.get(currentDate.getMonth() + 1);
+    for(let i = 0; i < temp.length; i += 1) {
+        let birthday = temp[i].birthday;
+        let age = `${birthday.getFullYear()}0${birthday.getMonth()}${birthday.getDate()}`;
+        let formatedAge = moment(age).fromNow().match(/[0-9]+/g)
+        return `(${temp[i].birthday.getDate()}) - ${temp[i].name} (${formatedAge} года)`
+    }
+         
+}
+
+export default formatStr;
