@@ -50,18 +50,19 @@ function sortByMonth(employees) {
 function formatMonth(map, plan = 0) {
     let result = [];
     for(const [key, value] of map) {
-        let today = new Date();
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
         if(plan === 0) {
-            if(today.getMonth() + 1 === key) {
-                result.push(formatList(map, key, today));
+            if(currentMonth + 1 === key) {
+                result.push(formatList(map, key, currentDate));
             }
         } else if (plan === 1) {
-            if(today.getMonth() + 1 === key || today.getMonth() + 2 === key) {
-                result.push(formatList(map, key, today));
+            if(currentMonth + 1 === key || currentMonth + 2 === key) {
+                result.push(formatList(map, key, currentDate));
             }
         } else if (plan === 2) {
-            if(today.getMonth() + 1 === key || today.getMonth() + 2 === key || today.getMonth() + 3 === key) {
-                result.push(formatList(map, key, today));
+            if(currentMonth + 1 === key || currentMonth + 2 === key || currentMonth + 3 === key) {
+                result.push(formatList(map, key, currentDate));
             }
         }
     }
