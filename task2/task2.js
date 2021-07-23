@@ -3,15 +3,6 @@ moment.locale('ru');
 
 const allMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Ноябрь', 'Декабрь'];
 
-let employees = [
-    { name: 'Ваня Иванов', birthday: '2000-08-20' },
-    { name: 'Коля Новогодний', birthday: '2000-07-02' },
-    { name: 'Петя Петров', birthday: '2002-09-29' },
-    { name: 'Стас Рождественский', birthday: '2001-09-01' },
-    { name: 'Марина Майская', birthday: '2003-08-17' },
-    { name: 'Стас Неяснов', birthday: '2003-07-16' }
-]
-
 function formatMap(list) {
     let employeeMap = new Map();
     list.forEach((user) => {
@@ -34,28 +25,29 @@ function formatStr(map, month) {
     for(let i = 0; i < employees.length; i += 1) {
         let birthday = employees[i].birthday;
         let age = birthday.replace(/[-]+/g, '');
-        let formatedAge = moment(age).fromNow().match(/[0-9]+ (лет|года|год)/g)
-        result.push(`(${new Date(birthday).getDate()}) - ${employees[i].name} (${formatedAge})`); 
+        let formatedAge = moment(age).fromNow().match(/[0-9]+ (лет|года|год)/g);
+        let formatedDay = new Date(birthday).getDate().toString().length < 2 ? `0${new Date(birthday).getDate()}` : `${new Date(birthday).getDate()}`;
+        result.push(`(${formatedDay}) - ${employees[i].name} (${formatedAge})`); 
     }
-    sortByDate(result)
+    sortByDay(result);
     return result.join('\n');
 }
 
-function sortByDate(employees) {
-    employees.sort((current, next) => {
+function sortByDay(employees) {
+    return employees.sort((current, next) => {
         return Number(current.match(/(?<=\()[0-9]+(?=\))/g)) > Number(next.match(/(?<=\()[0-9]+(?=\))/g)) ? 1 : -1
     });
 }
 
 function sortByMonth(employees) {
-    employees.sort((current, next) => {
+    return employees.sort((current, next) => {
         let idCurrentMonth = allMonths.indexOf(current.match(/^[А-Яа-я]+(?=\s)/g)[0]);
         let idNextMonth = allMonths.indexOf(next.match(/^[А-Яа-я]+(?=\s)/g)[0]);
-        return idCurrentMonth > idNextMonth ? 1 : -1
+        return idCurrentMonth > idNextMonth ? 1 : -1;
     });
 }
 
-function formatMonth(map, plan = 1) {
+function formatMonth(map, plan = 0) {
     let result = [];
     for(const [key, value] of map) {
         let today = new Date();
@@ -73,16 +65,16 @@ function formatMonth(map, plan = 1) {
             }
         }
     }
-    sortByMonth(result)
+    sortByMonth(result);
     return result.join('\n');
 }
 
 function formatList(map, id, date) {
-    let result;
-    result = `${allMonths[id - 1]} ${date.getFullYear()}\n${formatStr(map, id)}`
-    return result;  
+    return `${allMonths[id - 1]} ${date.getFullYear()}\n${formatStr(map, id)}`;  
 }
 
-export {formatMap, formatStr, formatMonth, formatList, sortByMonth, sortByDate};
+function getList(map, id) {
+    return formatMonth(formatMap(map), id);
+}
 
-//console.log(formatMonth(formatMap(employees)))
+export { formatMap, formatStr, formatMonth, formatList, sortByMonth, sortByDay, getList };
