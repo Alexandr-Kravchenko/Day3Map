@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Alexandr-Kravchenko/Day3Map#readme",
   "dependencies": {
+    "csv-parser": "^3.0.0",
     "moment": "^2.29.1"
   }
 }

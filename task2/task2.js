@@ -1,5 +1,18 @@
+const fs = require('fs'); 
+const csv = require('csv-parser');
 const moment = require('moment');
 moment.locale('ru');
+
+let path = process.argv[2];
+let plan = process.argv[3] === undefined ? 0 : Number(process.argv[3]);
+
+let results = [];
+fs.createReadStream(path)
+  .pipe(csv())
+  .on('data', (data) => results.push(data))
+  .on('end', () => {
+    console.log(getList(results, plan));
+  });
 
 const allMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Ноябрь', 'Декабрь'];
 
@@ -79,4 +92,4 @@ function getList(map, id) {
     return formatMonths(formatMap(map), id);
 }
 
-export { formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList };
+//export { formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList };
