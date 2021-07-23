@@ -26,7 +26,7 @@ function formatStr(map, month) {
         let birthday = employees[i].birthday;
         let age = birthday.replace(/[-]+/g, '');
         let formatedAge = moment(age).fromNow().match(/[0-9]+ (лет|года|год)/g);
-        let formatedDay = new Date(birthday).getDate().toString().length < 2 ? `0${new Date(birthday).getDate()}` : `${new Date(birthday).getDate()}`;
+        let formatedDay = new Date(birthday).getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
         result.push(`(${formatedDay}) - ${employees[i].name} (${formatedAge})`); 
     }
     sortByDay(result);
