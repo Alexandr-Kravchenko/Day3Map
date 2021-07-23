@@ -1,4 +1,4 @@
-import {formatMap, formatStr, formatMonth, formatList, sortByMonth, sortByDay, getList } from './task2';
+import {formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList } from './task2';
 
 let employees = [
     { name: 'Ваня Иванов', birthday: '2000-08-20' },
@@ -44,22 +44,28 @@ describe('Sorted Employee\'s birthday list', () => {
         ]);
     });
 
-    it('formatList should return string "month year and formated string of employees" for current month', () => {
+    it('formatOneMonth should return string "month year and formated string of employees" for inputed month', () => {
         let testMap = new Map().set(7, [
             { name: 'Коля Новогодний', birthday: '2000-07-02' },
             { name: 'Стас Неяснов', birthday: '2003-07-16' }
         ]);
-        expect(formatList(testMap, 7, new Date())).toEqual(`Июль 2021\n(02) - Коля Новогодний (21 год)\n(16) - Стас Неяснов (18 лет)`);
+        expect(formatOneMonth(testMap, 7, new Date())).toEqual(`Июль 2021\n(02) - Коля Новогодний (21 год)\n(16) - Стас Неяснов (18 лет)`);
     });
 
-    it('formatMonth should return string "month year and formated string of employees" for current month', () => {
+    it('formatMonths should return formated string', () => {
         let testMap = new Map().set(7, [
             { name: 'Коля Новогодний', birthday: '2000-07-02' },
             { name: 'Стас Неяснов', birthday: '2003-07-16' }
         ]);
-        expect(formatMonth(testMap, 0)).toEqual(`Июль 2021\n(02) - Коля Новогодний (21 год)\n(16) - Стас Неяснов (18 лет)`);
+        testMap.set(9, [
+            { name: 'Стас Рождественский', birthday: '2001-09-01' }
+        ]);
+        testMap.set(8, [
+            { name: 'Марина Майская', birthday: '2003-08-17' }
+        ]);
+        expect(formatMonths(testMap, 0)).toEqual(`Июль 2021\n(02) - Коля Новогодний (21 год)\n(16) - Стас Неяснов (18 лет)`);
     });
-
+    
     it('getList should return correctly formated string for current month', () => {
         let test = getList(employees, 0);
         expect(test).toBe(`Июль 2021\n(02) - Коля Новогодний (21 год)\n(16) - Стас Неяснов (18 лет)`)
