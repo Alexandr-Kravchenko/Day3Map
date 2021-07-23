@@ -92,4 +92,4 @@ function getList(map, id) {
     return formatMonths(formatMap(map), id);
 }
 
-//export { formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList };
+export { formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList };
