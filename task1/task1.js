@@ -1,24 +1,16 @@
 function wordFrequency(text) {
-    const wordMap = new Map();
-    let words = text.toLowerCase().replace(/[.,]/g, '').split(' '); // убрать реплейс и сплит по регулярке
+    let sepGroup = /((\s(\k<grp>|-)\s)|(?<grp>[\r\n\s,\.?!;:"\(\)]+)|((\k<grp>|-)\s)|(\s(\k<grp>|-))|('(?=\s)|(?<=\s)'))(?!$)/gm;
+    let words = text.toLowerCase().replace(/[\r\n\s,\.?!;:'"\(\)]+$/gm, '').replace(sepGroup, ' ').split(' ');
+    const wordsMap = new Map();
     for(let i = 0; i < words.length; i += 1) {
-        if(wordMap.has(words[i])) {
-            wordMap.set(words[i], wordMap.get(words[i]) + 1);
+        if(wordsMap.has(words[i])) {
+            wordsMap.set(words[i], wordsMap.get(words[i]) + 1);
         } else {
-            wordMap.set(words[i], 1);
+            wordsMap.set(words[i], 1);
         } 
     }
-    return wordMap;
+    return wordsMap;
 }
 
-console.log(wordFrequency('Какая-то строка, тут есть слова,слова тут повторяются, есть.')) 
-
+//console.log(wordFrequency('Чистики - небольшие птицы.Чистики (живут) как-то в открытом море.\nТолько на время гнездования, выходят чистики на берег "Чистики" гнездятся на: каменных островах. Гнездовья морских чистиков надежно защищены от врагов? '))
 export default wordFrequency;
-    /* 
-        Какая-то
-        строка
-        тут - 2
-        есть - 2 
-        слова - 2  
-        повторяются
-    */

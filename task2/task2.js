@@ -3,7 +3,7 @@ const csv = require('csv-parser');
 const moment = require('moment');
 moment.locale('ru');
 
-let path = process.argv[2];
+/* let path = process.argv[2];
 let plan = process.argv[3] === undefined ? 0 : Number(process.argv[3]);
 
 let results = [];
@@ -12,84 +12,96 @@ fs.createReadStream(path)
   .on('data', (data) => results.push(data))
   .on('end', () => {
     console.log(getList(results, plan));
-  });
+  }); */
 
-const allMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Ноябрь', 'Декабрь'];
+const allMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 
 function formatMap(list) {
     let employeeMap = new Map();
     list.forEach((user) => {
-        let birthMonth = new Date(user.birthday).getMonth() + 1;
+        let birthDate = new Date(user.birthday);
+        let birthMonth = birthDate.getMonth();
         if(employeeMap.has(birthMonth)) {
-            let employees = employeeMap.get(birthMonth);
-            employees.push(user);
-            employeeMap.set(birthMonth, employees)
+            let tempEmployees = employeeMap.get(birthMonth);
+            tempEmployees.push({...user, birthday: birthDate});
+            employeeMap.set(birthMonth, tempEmployees);
         } else {
-            employeeMap.set(birthMonth, [user])
+            employeeMap.set(birthMonth, [{...user, birthday: birthDate}]);
         }
     })
     return employeeMap;
 }
 
-function formatStr(map, month) {
-    let employees = map.get(month);
+function formatList(map, plan) {
     let result = [];
-    for(let i = 0; i < employees.length; i += 1) {
-        let birthday = employees[i].birthday;
-        let age = birthday.replace(/[-]+/g, '');
-        let formatedAge = moment(age).fromNow().match(/[0-9]+ (лет|года|год)/g);
-        let formatedDay = new Date(birthday).getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
-        result.push(`(${formatedDay}) - ${employees[i].name} (${formatedAge})`); 
+    for (const [key, value] of map) {
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth() + 1;
+/*         if (plan === 0) {
+            if(currentMonth === key) {
+                result.push(sortByDay(value));
+            }
+        } else if (plan === 1) {
+            if(currentMonth === key || currentMonth + 1 === key) {
+                result.push(sortByDay(value));
+            }
+        } else if (plan === 2) {
+            if(currentMonth === key || currentMonth + 1 === key || currentMonth + 2 === key) {
+                result.push(sortByDay(value));
+            }
+        }
+        result.push(sortByDay(value)); */
+
+        for(let i = 0; i <= plan; i += 1) {
+            let month = (currentMonth + i) % 12 - 1;
+            if(key === month) {
+                result.push(sortByDay(value));
+            }
+        }
     }
-    sortByDay(result);
-    return result.join('\n');
+    return sortByMonth(result);
 }
 
 function sortByDay(employees) {
-    return employees.sort((current, next) => {
-        let regExpDay = /(?<=\()[0-9]+(?=\))/g;
-        return Number(current.match(regExpDay)) > Number(next.match(regExpDay)) ? 1 : -1;
+    return employees.sort( (current, next) => {
+        return current.birthday.getDate() > next.birthday.getDate() ? 1 : -1;
     });
 }
 
 function sortByMonth(employees) {
-    return employees.sort((current, next) => {
-        let regExpMonth = /^[А-Яа-я]+(?=\s)/g;
-        let idCurrentMonth = allMonths.indexOf(current.match(regExpMonth)[0]);
-        let idNextMonth = allMonths.indexOf(next.match(regExpMonth)[0]);
-        return idCurrentMonth > idNextMonth ? 1 : -1;
+    return employees.sort( (current, next) => {
+        return current[0].birthday.getMonth() > next[0].birthday.getMonth() ? 1 : -1;
     });
 }
 
-function formatMonths(map, plan = 0) {
-    let result = [];
-    for(const [key, value] of map) {
+function formatStr(array, plan) {
+    const result = array.map((employees) => {
         let currentDate = new Date();
-        let currentMonth = currentDate.getMonth();
-        if(plan === 0) {
-            if(currentMonth + 1 === key) {
-                result.push(formatOneMonth(map, key, currentDate));
-            }
-        } else if (plan === 1) {
-            if(currentMonth + 1 === key || currentMonth + 2 === key) {
-                result.push(formatOneMonth(map, key, currentDate));
-            }
-        } else if (plan === 2) {
-            if(currentMonth + 1 === key || currentMonth + 2 === key || currentMonth + 3 === key) {
-                result.push(formatOneMonth(map, key, currentDate));
-            }
-        }
-    }
-    sortByMonth(result);
+        let year = currentDate.getMonth() <= employees[0].birthday.getMonth() ? currentDate.getFullYear() : currentDate.getFullYear() + 1;
+        let text = `${allMonths[employees[0].birthday.getMonth()]} ${year}\n`
+        return text + employees.map((emp, index) => {
+            let date = currentDate.getMonth() <= employees[index].birthday.getMonth() ? currentDate : currentDate.setFullYear(currentDate.getFullYear() + 1);
+            let formatedDay = emp.birthday.getDate().toLocaleString(undefined, {minimumIntegerDigits: 2});
+            let formatedAge = moment(emp.birthday).from(date, true); // true - without 'ago'
+            return `(${formatedDay}) - ${emp.name} (${formatedAge})`
+        }).join('\n');
+    });
+
     return result.join('\n');
 }
 
-function formatOneMonth(map, id, date) {
-    return `${allMonths[id - 1]} ${date.getFullYear()}\n${formatStr(map, id)}`;  
+let employees = [
+    { name: 'Ваня Иванов', birthday: '2000-12-20' },
+    { name: 'Коля Новогодний', birthday: '2000-02-16' },
+    { name: 'Петя Петров', birthday: '2002-01-29' },
+    { name: 'Стас Рождественский', birthday: '2001-09-01' },
+    { name: 'Марина Майская', birthday: '2003-07-17' },
+    { name: 'Стас Неяснов', birthday: '2003-08-02' }
+];
+
+function main(map, plan = 0) {
+    plan = plan % 12;
+    return formatStr(formatList(formatMap(map), plan), plan);
 }
 
-function getList(map, id) {
-    return formatMonths(formatMap(map), id);
-}
-
-export { formatMap, formatStr, formatMonths, formatOneMonth, sortByMonth, sortByDay, getList };
+console.log(main(employees, 0));
