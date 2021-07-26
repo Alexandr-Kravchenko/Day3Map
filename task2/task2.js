@@ -104,4 +104,4 @@ function main(map, plan = 0) {
     return formatStr(formatList(formatMap(map), plan), plan);
 }
 
-console.log(main(employees, 0));
+console.log(main(employees, 9));
